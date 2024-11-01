@@ -1,5 +1,3 @@
-# widgets/reader_widget.py
-
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -11,6 +9,8 @@ from kivy.clock import Clock
 from kivy.metrics import dp
 from kivy.properties import StringProperty, BooleanProperty, ObjectProperty
 from kivy_text_metrics import TextMetrics
+
+
 
 from utils.text_processor import TextProcessor
 from utils.file_handler import FileHandler, Word
@@ -62,12 +62,16 @@ class RSVPReader(FloatLayout):
         
         # Settings button
         self.settings_button = Button(
-            text='⚙',
+
+            background_normal='gear-icon.png',
+
             size_hint_x=None,
-            width=BUTTON_HEIGHT,
-            background_normal='',
-            background_color=(0.9, 0.9, 0.9, 1)
+
+            width=BUTTON_HEIGHT
+
         )
+
+
         
         # File selection button
         self.file_button = Button(
@@ -75,7 +79,8 @@ class RSVPReader(FloatLayout):
             size_hint_x=None,
             width=dp(100),
             background_normal='',
-            background_color=(0.9, 0.9, 0.9, 1)
+            background_color=(0.9, 0.9, 0.9, 1),
+            color = (0,0,0,1)
         )
         
         # Play/Pause button
@@ -85,7 +90,8 @@ class RSVPReader(FloatLayout):
             width=dp(100),
             disabled=True,
             background_normal='',
-            background_color=(0.9, 0.9, 0.9, 1)
+            background_color=(0.9, 0.9, 0.9, 1),
+            color = (0,0,0,1)
         )
         
         controls.add_widget(self.settings_button)
@@ -122,6 +128,8 @@ class RSVPReader(FloatLayout):
             height=DISPLAY_HEIGHT,
             pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
+
+
         
         self.display_area.add_widget(self.word_container)
         self.display_area.add_widget(self.focus_indicator)

@@ -22,6 +22,7 @@ except:
 import os
 from pathlib import Path
 import bbcode  # Required for Kivy text markup
+from kivy.clock import Clock
 from kivy.app import App
 from kivy.core.text import LabelBase
 from kivy.metrics import dp
@@ -117,6 +118,7 @@ class RSVPApp(App):
     def build(self):
         reader = RSVPReader()
         reader.app = self
+        Clock.schedule_once(lambda dt: self.update_display(), 0)
         return reader
     
     def update_display(self):

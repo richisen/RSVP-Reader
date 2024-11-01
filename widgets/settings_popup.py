@@ -39,7 +39,8 @@ class SettingsPopup(Popup):
             size_hint_y=None,
             height=BUTTON_HEIGHT,
             background_normal='',
-            background_color=(0.9, 0.9, 0.9, 1)
+            background_color=(0.9, 0.9, 0.9, 1),
+            color = (0,0,0,1)
         )
         self.font_spinner.bind(text=self.on_font_change)
         layout.add_widget(self.font_spinner)
@@ -52,7 +53,8 @@ class SettingsPopup(Popup):
             size_hint_y=None,
             height=BUTTON_HEIGHT,
             background_normal='',
-            background_color=(0.9, 0.9, 0.9, 1)
+            background_color=(0.9, 0.9, 0.9, 1),
+            color = (0,0,0,1)
         )
         self.size_spinner.bind(text=self.on_size_change)
         layout.add_widget(self.size_spinner)
@@ -65,7 +67,8 @@ class SettingsPopup(Popup):
             size_hint_y=None,
             height=BUTTON_HEIGHT,
             background_normal='',
-            background_color=(0.9, 0.9, 0.9, 1)
+            background_color=(0.9, 0.9, 0.9, 1),
+            color = (0,0,0,1)
         )
         self.wpm_spinner.bind(text=self.on_wpm_change)
         layout.add_widget(self.wpm_spinner)
@@ -76,7 +79,8 @@ class SettingsPopup(Popup):
             size_hint_y=None,
             height=BUTTON_HEIGHT,
             background_normal='',
-            background_color=(0.8, 0.8, 0.8, 1)
+            background_color=(0.8, 0.8, 0.8, 1),
+            color = (0,0,0,1)
         )
         close_button.bind(on_press=self.dismiss)
         layout.add_widget(close_button)
