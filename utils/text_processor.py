@@ -3,8 +3,8 @@
 import syllapy
 import pyphen
 from typing import Tuple, Optional
-from ..constants import (BASE_DURATION_FACTOR, LENGTH_FACTOR, 
-                        SYLLABLE_FACTOR, DEFAULT_FOCUS_OFFSET, BASE_WPM)
+from constants import (BASE_DURATION_FACTOR, LENGTH_FACTOR, 
+                        SYLLABLE_FACTOR, DEFAULT_FOCUS_OFFSET, BASE_WPM, FOCUS_COLOR)
 
 class TextProcessor:
     def __init__(self):
@@ -79,7 +79,7 @@ class TextProcessor:
         base_duration = 60.0 / base_wpm
         
         # Get word complexity factors
-        syllable_count = len(syllapy.count(word))
+        syllable_count = syllapy.count(word)
         length_factor = min(len(word) / 5.0, 2.0)  # Cap length impact
         syllable_factor = min(syllable_count / 2.0, 2.0)  # Cap syllable impact
         

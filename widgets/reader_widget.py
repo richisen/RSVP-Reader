@@ -11,12 +11,15 @@ from kivy.metrics import dp
 from kivy.properties import StringProperty, BooleanProperty, ObjectProperty
 from kivy_text_metrics import TextMetrics
 
-from ..utils.text_processor import TextProcessor
-from ..utils.file_handler import FileHandler, Word
-from .focus_indicator import FocusIndicator
-from .settings_popup import SettingsPopup
-from ..constants import (SUPPORTED_EXTENSIONS, PADDING, SPACING, BUTTON_HEIGHT,
-                        DISPLAY_HEIGHT)
+
+# Change relative imports to absolute
+
+from utils.text_processor import TextProcessor
+from utils.file_handler import FileHandler, Word
+from widgets.focus_indicator import FocusIndicator
+from widgets.settings_popup import SettingsPopup
+from constants import (SUPPORTED_EXTENSIONS, PADDING, SPACING, BUTTON_HEIGHT,
+                    DISPLAY_HEIGHT)
 
 class RSVPReader(FloatLayout):
     """
@@ -149,7 +152,7 @@ class RSVPReader(FloatLayout):
             filters=self._get_file_filters()
         )
         
-        def select_file(_, filename):
+        def select_file(instance, filename, touch=None):
             if filename:
                 self.load_file(filename[0])
                 popup.dismiss()
@@ -246,7 +249,8 @@ class RSVPReader(FloatLayout):
         # Update text metrics
         try:
             font_path = self.app.get_font_path(self.app.font_name)
-            self.metrics = TextMetrics(font_path, dp(self.app.font_size))
+            font_size = int(self.app.font_size)  # Added explicit integer conversion
+            self.metrics = TextMetrics(font_path, font_size)
         except Exception as e:
             print(f"Error creating TextMetrics: {e}")
             self.metrics = None

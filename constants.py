@@ -5,7 +5,7 @@ from kivy.metrics import dp
 # Required packages and versions
 REQUIRED_PACKAGES = [
     ('kivy', '2.3.0'),
-    ('freetype-py', None),
+    ('freetype', None),
     ('uharfbuzz', None),
     ('syllapy', None),
     ('pyphen', None),

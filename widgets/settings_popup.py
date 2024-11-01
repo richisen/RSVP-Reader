@@ -8,7 +8,7 @@ from kivy.uix.spinner import Spinner
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty
 
-from ..constants import (FONT_NAMES, FONT_SIZES, WPM_VALUES, 
+from constants import (FONT_NAMES, FONT_SIZES, WPM_VALUES, 
                         PADDING, SPACING, BUTTON_HEIGHT)
 
 class SettingsPopup(Popup):

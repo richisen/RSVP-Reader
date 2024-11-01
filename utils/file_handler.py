@@ -4,7 +4,7 @@ from typing import List, Tuple, Optional
 from pathlib import Path
 import os
 from timecoded_transcript import parse_timecoded_text
-from ..constants import SUPPORTED_EXTENSIONS
+from constants import SUPPORTED_EXTENSIONS
 
 class Word:
     """Represents a word with optional timing information."""

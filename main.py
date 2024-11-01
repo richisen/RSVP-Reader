@@ -42,11 +42,13 @@ class RSVPApp(App):
         self.font_size = DEFAULT_FONT_SIZE
         self.wpm = DEFAULT_WPM
         
+        # Store font paths
+        self.font_paths = {}
+
         # Register fonts
         self._register_fonts()
         
-        # Store font paths
-        self.font_paths = {}
+
         
     def _verify_requirements(self):
         """Verify all required packages are installed."""

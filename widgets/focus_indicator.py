@@ -4,27 +4,17 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Line, Rectangle
 from kivy.metrics import dp
 from kivy.properties import NumericProperty
-from ..constants import (CENTER_MARKER_COLOR, BASELINE_COLOR, 
-                        FOCUS_LINE_WIDTH, FOCUS_MARKER_HEIGHT,
-                        BASELINE_OFFSET)
+from constants import (CENTER_MARKER_COLOR, BASELINE_COLOR, FOCUS_LINE_WIDTH, 
+                      FOCUS_MARKER_HEIGHT, BASELINE_OFFSET)
 
 class FocusIndicator(Widget):
-    """
-    Visual indicator showing focus point and baseline for RSVP display.
-    
-    Features:
-    - Vertical lines marking the focus point (above and below text)
-    - Horizontal line indicating text baseline
-    - All measurements use device-independent pixels
-    - Properly scales with window/display changes
-    """
+    """Visual indicator showing focus point and baseline for RSVP display."""
     
     line_width = NumericProperty(FOCUS_LINE_WIDTH)
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.bind(pos=self.update_graphics,
-                 size=self.update_graphics)
+        self.bind(pos=self.update_graphics, size=self.update_graphics)
         self.update_graphics()
     
     def update_graphics(self, *args):
@@ -35,40 +25,39 @@ class FocusIndicator(Widget):
             Color(*CENTER_MARKER_COLOR)
             center_x = self.center_x
             
-            # Top marker line
+            # Top marker line - shorter and closer to text
             Line(
                 points=[
                     center_x, 
-                    self.top - FOCUS_MARKER_HEIGHT, 
+                    self.center_y + dp(25), 
                     center_x, 
-                    self.top
+                    self.center_y + dp(5)
                 ],
                 width=self.line_width
             )
             
-            # Bottom marker line
+            # Bottom marker line - shorter and closer to text
             Line(
                 points=[
                     center_x, 
-                    self.y, 
+                    self.center_y - dp(5), 
                     center_x, 
-                    self.y + FOCUS_MARKER_HEIGHT
+                    self.center_y - dp(25)
                 ],
                 width=self.line_width
             )
             
             # Baseline indicator with subtle color transition
-            # Draw a rectangle with gradient-like effect using multiple lines
-            baseline_y = self.y + BASELINE_OFFSET
+            baseline_y = self.center_y - dp(35)  # Closer to text
             line_count = 3
             for i in range(line_count):
                 alpha = 1.0 - (i / line_count)
                 Color(*BASELINE_COLOR[:3], alpha)
                 Line(
                     points=[
-                        self.x + dp(20),
+                        self.x + dp(40),  # Added padding on sides
                         baseline_y - dp(i),
-                        self.right - dp(20),
+                        self.right - dp(40),
                         baseline_y - dp(i)
                     ],
                     width=dp(1)
