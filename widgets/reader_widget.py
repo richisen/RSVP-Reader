@@ -1,6 +1,7 @@
 # widgets/reader_widget.py
 
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
@@ -10,9 +11,6 @@ from kivy.clock import Clock
 from kivy.metrics import dp
 from kivy.properties import StringProperty, BooleanProperty, ObjectProperty
 from kivy_text_metrics import TextMetrics
-
-
-# Change relative imports to absolute
 
 from utils.text_processor import TextProcessor
 from utils.file_handler import FileHandler, Word
@@ -24,14 +22,6 @@ from constants import (SUPPORTED_EXTENSIONS, PADDING, SPACING, BUTTON_HEIGHT,
 class RSVPReader(FloatLayout):
     """
     Main RSVP Reader widget that handles text display and playback.
-    
-    Features:
-    - Support for both text and timecoded files
-    - Device-independent pixel scaling
-    - Font measurement using provided metrics
-    - Focus character selection matching Spritz-style
-    - Proper baseline and center point indication
-    - WPM-based timing with word complexity consideration
     """
     
     current_word = StringProperty('')
@@ -40,16 +30,17 @@ class RSVPReader(FloatLayout):
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        
-        # Initialize components
         self.text_processor = TextProcessor()
         self.words = []
         self.current_index = 0
         self.scheduled_event = None
         self.metrics = None
-        
-        # Create UI
         self.setup_ui()
+        self.bind(size=self._on_size)
+    
+    def _on_size(self, *args):
+        """Handle window resize events."""
+        self.update_display()
     
     def setup_ui(self):
         """Initialize and layout the UI components."""
@@ -102,33 +93,42 @@ class RSVPReader(FloatLayout):
         controls.add_widget(self.play_button)
         
         # Display area
-        display_area = BoxLayout(
+        self.display_area = BoxLayout(
             orientation='vertical',
-            spacing=SPACING
+            spacing=dp(2)
         )
         
-        # Word display
+        # Create a relative layout for precise word positioning
+        self.word_container = RelativeLayout(
+            size_hint=(1, None),
+            height=DISPLAY_HEIGHT
+        )
+        
+        # Word display with improved initial centering
         self.word_display = Label(
             text='Select a file to begin',
             markup=True,
-            size_hint_y=None,
-            height=DISPLAY_HEIGHT,
-            font_size=dp(24)
-        )
-        
-        # Focus indicator
-        self.focus_indicator = FocusIndicator(
             size_hint=(None, None),
-            size=(dp(4), DISPLAY_HEIGHT),
-            pos_hint={'center_x': 0.5}
+            height=DISPLAY_HEIGHT,
+            font_size=dp(24),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
         
-        display_area.add_widget(self.word_display)
-        display_area.add_widget(self.focus_indicator)
+        self.word_container.add_widget(self.word_display)
+        
+        # Focus indicator with adjusted position
+        self.focus_indicator = FocusIndicator(
+            size_hint=(1, None),
+            height=DISPLAY_HEIGHT,
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+        )
+        
+        self.display_area.add_widget(self.word_container)
+        self.display_area.add_widget(self.focus_indicator)
         
         # Add everything to main layout
         self.main_layout.add_widget(controls)
-        self.main_layout.add_widget(display_area)
+        self.main_layout.add_widget(self.display_area)
         
         # Add main layout to root
         self.add_widget(self.main_layout)
@@ -242,35 +242,44 @@ class RSVPReader(FloatLayout):
     def update_display(self):
         """Update the display with the current word."""
         if not self.words:
+            self.word_display.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
             return
-        
+            
+        self.word_display.pos_hint = {}
         word = self.words[self.current_index]
         
-        # Update text metrics
         try:
             font_path = self.app.get_font_path(self.app.font_name)
-            font_size = int(self.app.font_size)  # Added explicit integer conversion
+            font_size = int(self.app.font_size)
             self.metrics = TextMetrics(font_path, font_size)
+            self.focus_indicator.update_font_size(font_size)
         except Exception as e:
             print(f"Error creating TextMetrics: {e}")
             self.metrics = None
         
-        # Get focus character position
         focus_pos = self.text_processor.calculate_focus_character(word.text)
-        
-        # Format and display word
-        self.word_display.text = self.text_processor.format_word_with_focus(
-            word.text,
-            focus_pos,
-            self.metrics,
+        formatted_word = self.text_processor.format_word_with_focus(
+            word.text, focus_pos, self.metrics,
             self.word_display.texture_size if self.word_display.texture else None
         )
         
-        # Update focus indicator position
+        self.word_display.text = formatted_word
+        self.word_display.texture_update()
+        
         if self.metrics and self.word_display.texture:
             glyph_attribs, ascender, descender = self.metrics.get_text_extents(
-                word.text,
-                self.word_display.texture_size
+                word.text, self.word_display.texture_size
             )
-            # Focus indicator position updated based on metrics
-            self.focus_indicator.pos_hint['center_x'] = 0.5
+            
+            # Calculate focus width including half of focus character
+            focus_width = sum(attrib[6] for attrib in glyph_attribs[:focus_pos])
+            if focus_pos < len(glyph_attribs):
+                focus_width += glyph_attribs[focus_pos][6] / 2
+            
+            self.word_display.width = self.word_display.texture_size[0]
+            
+            # Calculate x position relative to container width for consistent centering
+            self.word_display.x = self.word_container.width / 2 - focus_width
+            
+            # Position vertically
+            self.word_display.y = self.word_container.height / 2 - self.word_display.height / 2

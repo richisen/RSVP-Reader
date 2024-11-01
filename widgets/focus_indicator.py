@@ -1,64 +1,50 @@
 # widgets/focus_indicator.py
 
 from kivy.uix.widget import Widget
-from kivy.graphics import Color, Line, Rectangle
+from kivy.graphics import Color, Line
 from kivy.metrics import dp
 from kivy.properties import NumericProperty
-from constants import (CENTER_MARKER_COLOR, BASELINE_COLOR, FOCUS_LINE_WIDTH, 
-                      FOCUS_MARKER_HEIGHT, BASELINE_OFFSET)
 
 class FocusIndicator(Widget):
     """Visual indicator showing focus point and baseline for RSVP display."""
     
-    line_width = NumericProperty(FOCUS_LINE_WIDTH)
+    line_width = NumericProperty(dp(2))
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.bind(pos=self.update_graphics, size=self.update_graphics)
+        self._font_size = dp(24)
+        self.bind(pos=self.update_graphics, 
+                 size=self.update_graphics)
+        self.update_graphics()
+    
+    def update_font_size(self, font_size):
+        """Update indicator sizes based on font size."""
+        self._font_size = dp(font_size)
         self.update_graphics()
     
     def update_graphics(self, *args):
         """Update the indicator graphics, ensuring proper scaling and positioning."""
         self.canvas.clear()
         with self.canvas:
-            # Center marker (vertical lines)
-            Color(*CENTER_MARKER_COLOR)
+            # Center marker
+            Color(0.8, 0.8, 0.8, 1)  # Light gray
             center_x = self.center_x
+            marker_height = self._font_size * 0.25
+            spacing = dp(1)
             
-            # Top marker line - shorter and closer to text
-            Line(
-                points=[
-                    center_x, 
-                    self.center_y + dp(25), 
-                    center_x, 
-                    self.center_y + dp(5)
-                ],
-                width=self.line_width
-            )
+            # Top marker line
+            Line(points=[center_x, self.center_y + marker_height,
+                       center_x, self.center_y + spacing],
+                width=self.line_width)
             
-            # Bottom marker line - shorter and closer to text
-            Line(
-                points=[
-                    center_x, 
-                    self.center_y - dp(5), 
-                    center_x, 
-                    self.center_y - dp(25)
-                ],
-                width=self.line_width
-            )
+            # Bottom marker line
+            Line(points=[center_x, self.center_y - spacing,
+                       center_x, self.center_y - marker_height],
+                width=self.line_width)
             
-            # Baseline indicator with subtle color transition
-            baseline_y = self.center_y - dp(35)  # Closer to text
-            line_count = 3
-            for i in range(line_count):
-                alpha = 1.0 - (i / line_count)
-                Color(*BASELINE_COLOR[:3], alpha)
-                Line(
-                    points=[
-                        self.x + dp(40),  # Added padding on sides
-                        baseline_y - dp(i),
-                        self.right - dp(40),
-                        baseline_y - dp(i)
-                    ],
-                    width=dp(1)
-                )
+            # Simple white baseline
+            Color(1, 1, 1, 1)  # White
+            baseline_y = self.center_y - self._font_size * 0.3
+            Line(points=[self.x + dp(10), baseline_y,
+                       self.right - dp(10), baseline_y],
+                width=dp(1))

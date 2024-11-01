@@ -50,10 +50,10 @@ DISPLAY_HEIGHT = dp(100)
 
 # Colors
 FOCUS_COLOR = 'ff0000'  # Red for focus character
-BASELINE_COLOR = (0.7, 0.7, 0.7, 1)  # Gray for baseline
+BASELINE_COLOR = (0.6, 0.6, 0.6, 1)  # Light gray for baseline
 CENTER_MARKER_COLOR = (0.8, 0.8, 0.8, 1)  # Light gray for center marker
 
 # Focus Indicator
 FOCUS_LINE_WIDTH = dp(2)
-FOCUS_MARKER_HEIGHT = dp(20)
+FOCUS_MARKER_HEIGHT = 20  # Base height that will be scaled with font size
 BASELINE_OFFSET = dp(30)
